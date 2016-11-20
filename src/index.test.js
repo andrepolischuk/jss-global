@@ -11,7 +11,7 @@ describe('jss-global', () => {
   let jss
 
   beforeEach(() => {
-    jss = create(settings ).use(global())
+    jss = create(settings).use(global())
   })
 
   describe('@global root container', () => {
@@ -128,9 +128,5 @@ describe('jss-global', () => {
         '}'
       )
     })
-  })
-
-  describe('using nesting inside of @global', () => {
-
   })
 })

@@ -1,5 +1,3 @@
-import {RulesContainer} from 'jss'
-
 const key = '@global'
 
 class GlobalContainerRule {
@@ -63,7 +61,7 @@ function handleNestedGlobalContainerRule(rule) {
 function handlePrefixedGlobalRule(rule) {
   const {options, style} = rule
   for (const prop in style) {
-    if (prop.substr(0, key.length) !== key) continue
+    if (prop.substr(0, key.length) !== key) continue
 
     const selector = prop.substr(key.length).trim()
     const scopedSelector = `${rule.selector} ${selector}`
