@@ -1,8 +1,9 @@
-const key = '@global'
+const containerKey = '@global'
+const prefixKey = '@global '
 
 class GlobalContainerRule {
   constructor(name, styles, options) {
-    this.name = key
+    this.name = containerKey
     this.options = options
     this.rules = []
 
@@ -10,6 +11,7 @@ class GlobalContainerRule {
       const rule = options.jss.createRule(selector, styles[selector], {
         ...options,
         className: selector,
+        parent: this,
         selector
       })
       this.rules.push(rule)
@@ -25,12 +27,13 @@ class GlobalContainerRule {
 
 class GlobalPrefixedRule {
   constructor(name, style, options) {
-    this.name = key
+    this.name = containerKey
     this.options = options
-    const selector = name.substr(key.length).trim()
+    const selector = name.substr(containerKey.length).trim()
     this.rule = options.jss.createRule(selector, style, {
       ...options,
       className: selector,
+      parent: this,
       selector
     })
   }
@@ -42,7 +45,7 @@ class GlobalPrefixedRule {
 
 function handleNestedGlobalContainerRule(rule) {
   const {options, style} = rule
-  const rules = style[key]
+  const rules = style[containerKey]
 
   if (!rules) return
 
@@ -55,15 +58,15 @@ function handleNestedGlobalContainerRule(rule) {
     })
   }
 
-  delete style[key]
+  delete style[containerKey]
 }
 
 function handlePrefixedGlobalRule(rule) {
   const {options, style} = rule
   for (const prop in style) {
-    if (prop.substr(0, key.length) !== key) continue
+    if (prop.substr(0, containerKey.length) !== containerKey) continue
 
-    const selector = prop.substr(key.length).trim()
+    const selector = prop.substr(containerKey.length).trim()
     const scopedSelector = `${rule.selector} ${selector}`
     options.sheet.addRule(scopedSelector, style[prop], {
       ...options,
@@ -81,17 +84,23 @@ function handlePrefixedGlobalRule(rule) {
  * @api public
  */
 export default function jssGlobal() {
-  function onSetup(jss, rulesFactory) {
-    rulesFactory.register(`${key} `, GlobalPrefixedRule)
-    rulesFactory.register(key, GlobalContainerRule)
+  function onCreate(name, styles, options) {
+    if (name === containerKey) {
+      return new GlobalContainerRule(name, styles, options)
+    }
+
+    if (name.substr(0, prefixKey.length) === prefixKey) {
+      return new GlobalPrefixedRule(name, styles, options)
+    }
   }
 
-  function onRule(rule) {
+  function onProcess(rule) {
     if (rule.type !== 'regular' || !rule.style) return
 
     handleNestedGlobalContainerRule(rule)
     handlePrefixedGlobalRule(rule)
   }
 
-  return {onSetup, onRule}
+  return {onCreate, onProcess}
 }
+
