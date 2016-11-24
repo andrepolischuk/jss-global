@@ -81,9 +81,9 @@ function handlePrefixedGlobalRule(rule) {
  * @api public
  */
 export default function jssGlobal() {
-  function onSetup(jss) {
-    jss.registerRuleClass(`${key} `, GlobalPrefixedRule)
-    jss.registerRuleClass(key, GlobalContainerRule)
+  function onSetup(jss, rulesFactory) {
+    rulesFactory.register(`${key} `, GlobalPrefixedRule)
+    rulesFactory.register(key, GlobalContainerRule)
   }
 
   function onRule(rule) {
