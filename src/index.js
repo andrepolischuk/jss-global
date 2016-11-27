@@ -1,9 +1,9 @@
-const containerKey = '@global'
+const key = '@global'
 const prefixKey = '@global '
 
 class GlobalContainerRule {
   constructor(name, styles, options) {
-    this.name = containerKey
+    this.name = name
     this.options = options
     this.rules = []
 
@@ -27,9 +27,9 @@ class GlobalContainerRule {
 
 class GlobalPrefixedRule {
   constructor(name, style, options) {
-    this.name = containerKey
+    this.name = name
     this.options = options
-    const selector = name.substr(containerKey.length).trim()
+    const selector = name.substr(prefixKey.length)
     this.rule = options.jss.createRule(selector, style, {
       ...options,
       className: selector,
@@ -45,7 +45,7 @@ class GlobalPrefixedRule {
 
 function handleNestedGlobalContainerRule(rule) {
   const {options, style} = rule
-  const rules = style[containerKey]
+  const rules = style[key]
 
   if (!rules) return
 
@@ -58,15 +58,15 @@ function handleNestedGlobalContainerRule(rule) {
     })
   }
 
-  delete style[containerKey]
+  delete style[key]
 }
 
 function handlePrefixedGlobalRule(rule) {
   const {options, style} = rule
   for (const prop in style) {
-    if (prop.substr(0, containerKey.length) !== containerKey) continue
+    if (prop.substr(0, key.length) !== key) continue
 
-    const selector = prop.substr(containerKey.length).trim()
+    const selector = prop.substr(key.length).trim()
     const scopedSelector = `${rule.selector} ${selector}`
     options.sheet.addRule(scopedSelector, style[prop], {
       ...options,
@@ -85,7 +85,7 @@ function handlePrefixedGlobalRule(rule) {
  */
 export default function jssGlobal() {
   function onCreate(name, styles, options) {
-    if (name === containerKey) {
+    if (name === key) {
       return new GlobalContainerRule(name, styles, options)
     }
 
