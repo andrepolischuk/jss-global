@@ -84,7 +84,7 @@ function handlePrefixedGlobalRule(rule) {
  * @api public
  */
 export default function jssGlobal() {
-  function onCreate(name, styles, options) {
+  function onCreateRule(name, styles, options) {
     if (name === key) {
       return new GlobalContainerRule(name, styles, options)
     }
@@ -96,13 +96,13 @@ export default function jssGlobal() {
     return null
   }
 
-  function onProcess(rule) {
+  function onProcessRule(rule) {
     if (rule.type !== 'regular' || !rule.style) return
 
     handleNestedGlobalContainerRule(rule)
     handlePrefixedGlobalRule(rule)
   }
 
-  return {onCreate, onProcess}
+  return {onCreateRule, onProcessRule}
 }
 
