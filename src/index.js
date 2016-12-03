@@ -92,6 +92,8 @@ export default function jssGlobal() {
     if (name.substr(0, prefixKey.length) === prefixKey) {
       return new GlobalPrefixedRule(name, styles, options)
     }
+
+    return null
   }
 
   function onProcess(rule) {
