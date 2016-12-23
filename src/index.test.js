@@ -1,5 +1,6 @@
 import expect from 'expect.js'
 import {create} from 'jss'
+import nested from 'jss-nested'
 
 import global from './index'
 
@@ -125,6 +126,111 @@ describe('jss-global', () => {
         '}\n' +
         '.button-id span {\n' +
         '  color: red;\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('@global with nested rules inside', () => {
+    let jss2
+
+    beforeEach(() => {
+      jss2 = create({plugins: [global(), nested()]})
+    })
+
+    it('should handle regular nested rules', () => {
+      const sheet = jss2.createStyleSheet({
+        '@global': {
+          button: {
+            color: 'red',
+            '& span': {
+              color: 'green'
+            }
+          }
+        }
+      })
+      expect(sheet.toString()).to.be(
+        'button {\n' +
+        '  color: red;\n' +
+        '}\n' +
+        'button span {\n' +
+        '  color: green;\n' +
+        '}'
+      )
+    })
+
+    it('should handle regular deep nested rules', () => {
+      const sheet = jss2.createStyleSheet({
+        '@global': {
+          button: {
+            color: 'red',
+            '& span': {
+              color: 'green',
+              '& b': {
+                color: 'blue'
+              }
+            }
+          }
+        }
+      })
+
+      expect(sheet.toString()).to.be(
+        'button {\n' +
+        '  color: red;\n' +
+        '}\n' +
+        'button span {\n' +
+        '  color: green;\n' +
+        '}\n' +
+        'button span b {\n' +
+        '  color: blue;\n' +
+        '}'
+      )
+    })
+
+    it('should handle nested conditional rules', () => {
+      const sheet = jss2.createStyleSheet({
+        '@global': {
+          html: {
+            color: 'red',
+            '@media (max-width: 767px)': {
+              color: 'green'
+            }
+          }
+        }
+      })
+      expect(sheet.toString()).to.be(
+        'html {\n' +
+        '  color: red;\n' +
+        '}\n' +
+        '@media (max-width: 767px) {\n' +
+        '  html {\n' +
+        '    color: green;\n' +
+        '  }\n' +
+        '}'
+      )
+    })
+
+    it('should handle conditionals with nesting inside', () => {
+      const sheet = jss2.createStyleSheet({
+        '@global': {
+          '@media (max-width: 767px)': {
+            html: {
+              color: 'red',
+              '& button': {
+                color: 'green'
+              }
+            }
+          }
+        }
+      })
+      expect(sheet.toString()).to.be(
+        '@media (max-width: 767px) {\n' +
+        '  html {\n' +
+        '    color: red;\n' +
+        '  }\n' +
+        '  html button {\n' +
+        '    color: green;\n' +
+        '  }\n' +
         '}'
       )
     })
