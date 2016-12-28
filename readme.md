@@ -7,7 +7,7 @@ If you want to write regular globally scoped CSS with JSS, this plugin is for yo
 ## Top level global declarations block
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   '@global': {
     body: {
       color: 'green'
@@ -16,40 +16,41 @@ const sheet = jss.createStyleSheet({
       textDecoration: 'underline'
     }
   }
-})
+}
 ```
 
 ## Top level global prefix
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   '@global body': {
     color: 'green'
   }
-})
+}
 ```
 
 ## Nested global declarations block
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   button: {
     float: 'left',
     '@global': {
       span: {color: 'red'}
     }
   }
-})
+}
 ```
+
 ## Nested global prefix
 
 ```javascript
-const sheet = jss.createStyleSheet({
+const styles = {
   button: {
     float: 'left',
     '@global span': {color: 'red'}
   }
-})
+}
 ```
 
 ## Issues
