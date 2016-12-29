@@ -2,7 +2,7 @@
 
 If you want to write regular globally scoped CSS with JSS, this plugin is for you. Don't use it if you can avoid it.
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/cssinjs/lobby)
+[![Gitter](https://badges.gitter.im/JoinChat.svg)](https://gitter.im/cssinjs/lobby)
 
 ## Top level global declarations block
 
