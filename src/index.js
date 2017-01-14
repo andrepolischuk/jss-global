@@ -76,6 +76,18 @@ class GlobalPrefixedRule {
   }
 }
 
+const separatorRegExp = /\s*,\s*/g
+
+function addScope(selector, scope) {
+  const parts = selector.split(separatorRegExp)
+  let scoped = ''
+  for (let i = 0; i < parts.length; i++) {
+    scoped += `${scope} ${parts[i].trim()}`
+    if (parts[i + 1]) scoped += ', '
+  }
+  return scoped
+}
+
 function handleNestedGlobalContainerRule(rule) {
   const {options, style} = rule
   const rules = style[key]
@@ -83,10 +95,9 @@ function handleNestedGlobalContainerRule(rule) {
   if (!rules) return
 
   for (const name in rules) {
-    const selector = `${rule.selector} ${name}`
     options.sheet.addRule(name, rules[name], {
       ...options,
-      selector,
+      selector: addScope(name, rule.selector),
       generateClassName: null
     })
   }
@@ -99,11 +110,10 @@ function handlePrefixedGlobalRule(rule) {
   for (const prop in style) {
     if (prop.substr(0, key.length) !== key) continue
 
-    const selector = prop.substr(key.length).trim()
-    const scopedSelector = `${rule.selector} ${selector}`
-    options.sheet.addRule(scopedSelector, style[prop], {
+    const selector = addScope(prop.substr(key.length), rule.selector)
+    options.sheet.addRule(selector, style[prop], {
       ...options,
-      selector: scopedSelector,
+      selector,
       generateClassName: null
     })
     delete style[prop]

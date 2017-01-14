@@ -69,7 +69,7 @@ describe('jss-global', () => {
     })
   })
 
-  describe('@global container inside of a regular rule', () => {
+  describe('@global scoped container', () => {
     let sheet
 
     beforeEach(() => {
@@ -100,7 +100,38 @@ describe('jss-global', () => {
     })
   })
 
-  describe('@global prefix inside of a regular rule', () => {
+  describe('@global scoped container with comma separate selectors', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        button: {
+          float: 'left',
+          '@global': {
+            'a, b': {color: 'red'}
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('button')).to.not.be(undefined)
+      expect(sheet.getRule('.button-id a, .button-id b')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.button-id {\n' +
+        '  float: left;\n' +
+        '}\n' +
+        '.button-id a, .button-id b {\n' +
+        '  color: red;\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('@global prefixed scoped rule', () => {
     let sheet
 
     beforeEach(() => {
@@ -125,6 +156,37 @@ describe('jss-global', () => {
         '  float: left;\n' +
         '}\n' +
         '.button-id span {\n' +
+        '  color: red;\n' +
+        '}'
+      )
+    })
+  })
+
+  describe('@global prefixed scoped rule with comma separate selectors', () => {
+    let sheet
+
+    beforeEach(() => {
+      sheet = jss.createStyleSheet({
+        button: {
+          float: 'left',
+          '@global a, b': {
+            color: 'red'
+          }
+        }
+      })
+    })
+
+    it('should add rules', () => {
+      expect(sheet.getRule('button')).to.not.be(undefined)
+      expect(sheet.getRule('.button-id a, .button-id b')).to.not.be(undefined)
+    })
+
+    it('should generate correct CSS', () => {
+      expect(sheet.toString()).to.be(
+        '.button-id {\n' +
+        '  float: left;\n' +
+        '}\n' +
+        '.button-id a, .button-id b {\n' +
         '  color: red;\n' +
         '}'
       )
