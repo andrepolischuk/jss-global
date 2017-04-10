@@ -1,3 +1,7 @@
+## 1.0.0 / 2017-04-10
+
+- Support JSS 7.0
+
 ## 0.4.1 / 2017-01-14
 
 - Fixed comma separated scoped selectors (cssinjs/jss#400)
