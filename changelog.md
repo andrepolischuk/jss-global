@@ -1,3 +1,7 @@
+## 1.0.1 / 2017-04-18
+
+- Use latest jss-nested in devDeps
+
 ## 1.0.0 / 2017-04-10
 
 - Support JSS 7.0
