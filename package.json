@@ -1,6 +1,6 @@
 {
   "name": "jss-global",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Global styles for JSS",
   "main": "lib/index.js",
   "scripts": {
