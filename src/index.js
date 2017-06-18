@@ -1,4 +1,4 @@
-import {RulesContainer} from 'jss'
+import {RuleList} from 'jss'
 
 const key = '@global'
 const prefixKey = '@global '
@@ -6,19 +6,16 @@ const prefixKey = '@global '
 class GlobalContainerRule {
   type = 'global'
 
-  constructor(name, styles, options) {
-    this.name = name
+  constructor(key, styles, options) {
+    this.key = key
     this.options = options
-    this.rules = new RulesContainer({
+    this.rules = new RuleList({
       ...options,
       parent: this
     })
 
     for (const selector in styles) {
-      this.rules.add(selector, styles[selector], {
-        generateClassName: null,
-        selector
-      })
+      this.rules.add(selector, styles[selector], {selector})
     }
 
     this.rules.process()
@@ -35,10 +32,7 @@ class GlobalContainerRule {
    * Create and register rule, run plugins.
    */
   addRule(name, style, options) {
-    const rule = this.rules.add(name, style, {
-      ...options,
-      generateClassName: null
-    })
+    const rule = this.rules.add(name, style, options)
     this.options.jss.plugins.onProcessRule(rule)
     return rule
   }
@@ -66,8 +60,7 @@ class GlobalPrefixedRule {
     this.rule = options.jss.createRule(selector, style, {
       ...options,
       parent: this,
-      selector,
-      generateClassName: null
+      selector
     })
   }
 
@@ -97,8 +90,7 @@ function handleNestedGlobalContainerRule(rule) {
   for (const name in rules) {
     options.sheet.addRule(name, rules[name], {
       ...options,
-      selector: addScope(name, rule.selector),
-      generateClassName: null
+      selector: addScope(name, rule.selector)
     })
   }
 
@@ -113,8 +105,7 @@ function handlePrefixedGlobalRule(rule) {
     const selector = addScope(prop.substr(key.length), rule.selector)
     options.sheet.addRule(selector, style[prop], {
       ...options,
-      selector,
-      generateClassName: null
+      selector
     })
     delete style[prop]
   }
@@ -147,16 +138,13 @@ export default function jssGlobal() {
       }
     }
 
-    if (options.global) {
-      options.selector = name
-      options.generateClassName = null
-    }
+    if (options.global) options.selector = name
 
     return null
   }
 
   function onProcessRule(rule) {
-    if (rule.type !== 'regular' || !rule.style) return
+    if (rule.type !== 'style') return
 
     handleNestedGlobalContainerRule(rule)
     handlePrefixedGlobalRule(rule)
@@ -164,4 +152,3 @@ export default function jssGlobal() {
 
   return {onCreateRule, onProcessRule}
 }
-
