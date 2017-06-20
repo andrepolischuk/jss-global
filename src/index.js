@@ -1,6 +1,6 @@
 import {RuleList} from 'jss'
 
-const key = '@global'
+const propKey = '@global'
 const prefixKey = '@global '
 
 class GlobalContainerRule {
@@ -83,7 +83,7 @@ function addScope(selector, scope) {
 
 function handleNestedGlobalContainerRule(rule) {
   const {options, style} = rule
-  const rules = style[key]
+  const rules = style[propKey]
 
   if (!rules) return
 
@@ -94,15 +94,15 @@ function handleNestedGlobalContainerRule(rule) {
     })
   }
 
-  delete style[key]
+  delete style[propKey]
 }
 
 function handlePrefixedGlobalRule(rule) {
   const {options, style} = rule
   for (const prop in style) {
-    if (prop.substr(0, key.length) !== key) continue
+    if (prop.substr(0, propKey.length) !== propKey) continue
 
-    const selector = addScope(prop.substr(key.length), rule.selector)
+    const selector = addScope(prop.substr(propKey.length), rule.selector)
     options.sheet.addRule(selector, style[prop], {
       ...options,
       selector
@@ -119,7 +119,7 @@ function handlePrefixedGlobalRule(rule) {
  */
 export default function jssGlobal() {
   function onCreateRule(name, styles, options) {
-    if (name === key) {
+    if (name === propKey) {
       return new GlobalContainerRule(name, styles, options)
     }
 
