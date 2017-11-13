@@ -3,9 +3,7 @@ import {RuleList} from 'jss'
 const propKey = '@global'
 const prefixKey = '@global '
 
-class GlobalContainerRule {
-  type = 'global'
-
+class GlobalRule {
   constructor(key, styles, options) {
     this.key = key
     this.options = options
@@ -13,12 +11,6 @@ class GlobalContainerRule {
       ...options,
       parent: this
     })
-
-    for (const selector in styles) {
-      this.rules.add(selector, styles[selector], {selector})
-    }
-
-    this.rules.process()
   }
 
   /**
@@ -52,13 +44,27 @@ class GlobalContainerRule {
   }
 }
 
-class GlobalPrefixedRule extends GlobalContainerRule {
+class GlobalContainerRule extends GlobalRule {
+  constructor(key, styles, options) {
+    super(key, styles, options)
+    this.type = 'global'
+
+    for (const selector in styles) {
+      this.rules.add(selector, styles[selector], {selector})
+    }
+
+    this.rules.process()
+  }
+}
+
+class GlobalPrefixedRule extends GlobalRule {
   constructor(name, style, options) {
-    super(propKey, {}, options)
+    super(propKey, style, options)
 
     const selector = name.substr(prefixKey.length)
 
-    this.addRule(selector, style, {selector})
+    this.rules.add(selector, style, {selector})
+    this.rules.process()
   }
 }
 
