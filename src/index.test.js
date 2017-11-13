@@ -221,6 +221,25 @@ describe('jss-global', () => {
       )
     })
 
+    it('should handle prefixed nested rules', () => {
+      const sheet = jss2.createStyleSheet({
+        '@global button': {
+          color: 'red',
+          '& span': {
+            color: 'green'
+          }
+        }
+      })
+      expect(sheet.toString()).to.be(
+        'button {\n' +
+        '  color: red;\n' +
+        '}\n' +
+        'button span {\n' +
+        '  color: green;\n' +
+        '}'
+      )
+    })
+
     it('should handle nested rules inside of a rule with comma separated selector', () => {
       const sheet = jss2.createStyleSheet({
         '@global': {

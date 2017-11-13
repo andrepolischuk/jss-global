@@ -52,20 +52,13 @@ class GlobalContainerRule {
   }
 }
 
-class GlobalPrefixedRule {
+class GlobalPrefixedRule extends GlobalContainerRule {
   constructor(name, style, options) {
-    this.name = name
-    this.options = options
-    const selector = name.substr(prefixKey.length)
-    this.rule = options.jss.createRule(selector, style, {
-      ...options,
-      parent: this,
-      selector
-    })
-  }
+    super(propKey, {}, options)
 
-  toString(options) {
-    return this.rule.toString(options)
+    const selector = name.substr(prefixKey.length)
+
+    this.addRule(selector, style, {selector})
   }
 }
 
